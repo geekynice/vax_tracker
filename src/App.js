@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Dashboard from "./components/dashboard";
+import logo from "./logo.png";
+import Footer from "./components/footer"; 
 
-function App() {
+const App = () => {
+  const [families, setVaccine] = useState(null);
+
+  const fetchData = async () => {
+    const familyData = await axios.get("http://localhost:8000/tracker");
+    const data = Object.keys(familyData.data.data).map(
+      (family) => familyData.data.data[family]
+    );
+    setVaccine(data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  console.log(families);
+
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="App jumbotron">
+      <nav>
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      </nav>
+      <div className="dashboard p-5">
+        <div className="container">
+          <h1 className="mb-5 text-center">Community Vaccine Tracker</h1>
+          <Dashboard families={families} />
+        </div>
+      </div>
+      <Footer/>
     </div>
   );
-}
+};
 
 export default App;
